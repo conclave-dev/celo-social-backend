@@ -10,11 +10,6 @@ import (
 	"strings"
 )
 
-// RespondWithData acts as a wrapper for writing out a successful response
-func RespondWithData(data []byte, w http.ResponseWriter) {
-	w.Write(data)
-}
-
 // RespondWithError acts as a wrapper for writing out an erroneous response
 func RespondWithError(err error, w http.ResponseWriter) {
 	http.Error(w, err.Error(), http.StatusBadRequest)
