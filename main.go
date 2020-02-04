@@ -6,10 +6,15 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/stella-zone/celo-social-backend/kvstore"
 	"github.com/stella-zone/celo-social-backend/routes"
 )
 
+const redisConnURL = "localhost:6379"
+
 func main() {
+	kvstore.Dial(redisConnURL)
+
 	cors := handlers.CORS(
 		handlers.AllowedHeaders([]string{"content-type"}),
 		handlers.AllowedOrigins([]string{"*"}),
