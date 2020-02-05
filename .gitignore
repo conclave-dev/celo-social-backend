@@ -16,3 +16,6 @@
 
 # Go
 gin-bin
+
+# Environment
+.env
