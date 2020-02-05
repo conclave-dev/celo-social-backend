@@ -6,16 +6,33 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-var Redis redis.Conn
-
-func Dial(connUrl string) {
-	conn, err := redis.Dial("tcp", connUrl)
+func Dial() redis.Conn {
+	client, err := redis.Dial(connProto, connURL)
 	if err != nil {
 		log.Fatal(err)
-		return
 	}
 
-	defer conn.Close()
+	return client
+}
 
-	Redis = conn
+func IsUpdateExists(hash string) bool {
+	client := Dial()
+	defer client.Close()
+
+	exists, err := redis.Bool(client.Do("HEXISTS", UPDATES, hash))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return exists
+}
+
+func SetUpdate(hash string, update string) {
+	client := Dial()
+	defer client.Close()
+
+	_, err := client.Do("HSET", UPDATES, hash, update)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
