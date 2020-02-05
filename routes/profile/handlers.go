@@ -25,6 +25,7 @@ func updateProfile(w http.ResponseWriter, r *http.Request) {
 	checkSum := sha256.Sum256([]byte(fmt.Sprint(p)))
 	hash := fmt.Sprint(hex.EncodeToString(checkSum[:]))
 
+	// Check if the update already exists
 	exists := kvstore.IsUpdateExists(hash)
 	if exists == true {
 		err := errors.New("Update already exists")
@@ -38,6 +39,7 @@ func updateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Convert marshalled JSON into string and store update
 	kvstore.SetUpdate(hash, string(update))
 
 	res, err := json.Marshal(types.JSONResponse{

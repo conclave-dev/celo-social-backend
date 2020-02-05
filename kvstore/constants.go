@@ -3,5 +3,7 @@ package kvstore
 const (
 	connProto = "tcp"
 	connURL   = "localhost:6379"
-	UPDATES   = "Updates"
+
+	// Reusable hash key constants
+	UPDATES = "Updates"
 )

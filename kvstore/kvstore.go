@@ -6,6 +6,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
+// Dial connects to redis and returns the connected client
 func Dial() redis.Conn {
 	client, err := redis.Dial(connProto, connURL)
 	if err != nil {
@@ -15,6 +16,7 @@ func Dial() redis.Conn {
 	return client
 }
 
+// IsUpdateExists checks whether an update already exists
 func IsUpdateExists(hash string) bool {
 	client := Dial()
 	defer client.Close()
@@ -27,6 +29,7 @@ func IsUpdateExists(hash string) bool {
 	return exists
 }
 
+// SetUpdate stores the update hash along with the data for reference
 func SetUpdate(hash string, update string) {
 	client := Dial()
 	defer client.Close()
