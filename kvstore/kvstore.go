@@ -39,3 +39,14 @@ func SetUpdate(hash string, update string) {
 		log.Fatal(err)
 	}
 }
+
+// DeleteUpdate deletes the hash from the store
+func DeleteUpdate(hash string) {
+	client := Dial()
+	defer client.Close()
+
+	_, err := client.Do("HDEL", UPDATES, hash)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
