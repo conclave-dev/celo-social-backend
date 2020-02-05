@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS users(
+   id VARCHAR (100) NOT NULL PRIMARY KEY,
+   photo_url VARCHAR (200) NOT NULL,
+   email VARCHAR (200) NOT NULL,
+   description VARCHAR (200) NOT NULL,
+   members JSON NOT NULL
+);
