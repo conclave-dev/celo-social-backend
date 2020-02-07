@@ -15,8 +15,9 @@ type UpdateUserResponse struct {
 	Update string
 }
 
-type GetUserResponse struct {
-	AccountSummary types.Account `json:"summary"`
+type User struct {
+	Hash           string        `json:hash`
+	AccountSummary types.Account `json:"accountSummary"`
 	Profile        Profile       `json:"profile"`
 	Metadata       Metadata      `json:"metadata"`
 }
@@ -41,12 +42,12 @@ type Claims []Claim
 
 // Claim is a information that a user has claimed in their Celo account
 type Claim struct {
-	Address   common.Address `json:"address"`
-	Timestamp int            `json:"timestamp"`
-	Name      string         `json:"name,omitempty"`
-	Type      string         `json:"type,omitempty"`
-	URL       string         `json:"url,omitempty"`
-	Domain    string         `json:"domain,omitempty"`
+	Address   string `json:"address"`
+	Timestamp int    `json:"timestamp"`
+	Name      string `json:"name,omitempty"`
+	Type      string `json:"type,omitempty"`
+	URL       string `json:"url,omitempty"`
+	Domain    string `json:"domain,omitempty"`
 }
 
 // Meta is data related to the user making the claims
@@ -57,11 +58,11 @@ type Meta struct {
 
 // Profile is mutable user data
 type Profile struct {
-	Address     common.Address `json:"address"`
-	PhotoURL    string         `json:"photoURL"`
-	Email       string         `json:"email"`
-	Description string         `json:"description"`
-	Members     []Member       `json:"members"`
+	Address     string   `json:"address"`
+	PhotoURL    string   `json:"photoURL"`
+	Email       string   `json:"email"`
+	Description string   `json:"description"`
+	Members     []Member `json:"members"`
 }
 
 // Member is a member that the user has added

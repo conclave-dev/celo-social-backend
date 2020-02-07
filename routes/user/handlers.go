@@ -19,8 +19,7 @@ import (
 func getUser(w http.ResponseWriter, r *http.Request) {
 	userID := strings.SplitAfter(r.URL.Path, "/user/")[1]
 
-	var user _types.GetUserResponse
-	var addressData _types.AddressData
+	var user _types.User
 	switch isUser := true; isUser {
 	case kvstore.DoesAddressExist(userID):
 		fmt.Print("address exists")
@@ -29,17 +28,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("user exists")
 		break
 	case common.IsHexAddress(userID):
-		var err error
-		addressData, err = getAddressData(common.HexToAddress(userID), w)
-		if err != nil {
-			util.RespondWithError(err, w)
-			return
-		}
-
-		user = _types.GetUserResponse{
-			AccountSummary: addressData.AccountSummary,
-			Metadata:       addressData.Metadata,
-		}
+		handleUnclaimedUser(userID, &user, w)
 
 		break
 	default:

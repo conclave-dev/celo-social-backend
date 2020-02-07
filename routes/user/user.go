@@ -2,6 +2,8 @@ package user
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,12 +11,38 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/stella-zone/celo-social-backend/kvstore"
 	_types "github.com/stella-zone/celo-social-backend/types"
 	"github.com/stella-zone/celo-social-backend/util"
 )
 
-func getAddressData(address common.Address, w http.ResponseWriter) (_types.AddressData, error) {
+func handleUnclaimedUser(address string, user *_types.User, w http.ResponseWriter) {
+	addressData, err := getAddressData(address, w)
+	if err != nil {
+		util.RespondWithError(err, w)
+		return
+	}
+
+	user.AccountSummary = addressData.AccountSummary
+	user.Metadata = addressData.Metadata
+	user.Profile = getEmptyProfile(address)
+	user.Hash = generateUserHash(user.Metadata, user.Profile)
+
+	if len(addressData.ClaimParams) != 0 {
+		username := user.AccountSummary.Name
+		if username != "" {
+			u, err := json.Marshal(user)
+			if err != nil {
+				util.RespondWithError(err, w)
+				return
+			}
+
+			kvstore.SetUser(username, string(u))
+		}
+	}
+}
+
+func getAddressData(address string, w http.ResponseWriter) (_types.AddressData, error) {
 	var addressData _types.AddressData
 	var accountSummary _types.AccountSummaryResponse
 	err := fetchAccountSummary(address, &accountSummary, w)
@@ -38,9 +66,9 @@ func getAddressData(address common.Address, w http.ResponseWriter) (_types.Addre
 	return addressData, err
 }
 
-func fetchAccountSummary(address common.Address, account *_types.AccountSummaryResponse, w http.ResponseWriter) error {
+func fetchAccountSummary(address string, account *_types.AccountSummaryResponse, w http.ResponseWriter) error {
 	url := fmt.Sprintf("%s/accounts/getAccountSummary", ApiURL)
-	data := []byte(fmt.Sprintf(`{"address":"%s"}`, address.String()))
+	data := []byte(fmt.Sprintf(`{"address":"%s"}`, address))
 	reqJSON := bytes.NewBuffer(data)
 	req, err := http.NewRequest("POST", url, reqJSON)
 	if err != nil {
@@ -108,4 +136,26 @@ func getClaimParams(claims _types.Claims) []string {
 	}
 
 	return params
+}
+
+func getEmptyProfile(address string) _types.Profile {
+	profile := _types.Profile{
+		Address:     address,
+		PhotoURL:    "",
+		Email:       "",
+		Description: "",
+	}
+
+	return profile
+}
+
+func generateUserHash(metadata _types.Metadata, profile _types.Profile) string {
+	data := fmt.Sprint(_types.User{
+		Profile:  profile,
+		Metadata: metadata,
+	})
+
+	// Convert decoded user object to sha256 checksum
+	checkSum := sha256.Sum256([]byte(fmt.Sprint(data)))
+	return fmt.Sprint(hex.EncodeToString(checkSum[:]))
 }
