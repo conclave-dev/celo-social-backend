@@ -1,4 +1,4 @@
-package profile
+package user
 
 import (
 	"github.com/gorilla/mux"
@@ -6,5 +6,6 @@ import (
 
 // AddRoutes includes routes related to the `celo` endpoints on the RPC
 func AddRoutes(router *mux.Router) {
-	router.HandleFunc("/profile/update", updateProfile)
+	router.HandleFunc(`/user/{user}`, getUser)
+	router.HandleFunc(`/user/update/{user}`, updateUser)
 }
