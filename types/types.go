@@ -17,17 +17,18 @@ type UpdateUserResponse struct {
 
 type GetUserResponse struct {
 	AccountSummary types.Account `json:"summary"`
-	Profile        UserProfile   `json:"profile"`
-	Claims         Claims        `json:"claims"`
+	Profile        Profile       `json:"profile"`
+	Metadata       Metadata      `json:"metadata"`
 }
 
 type AccountSummaryResponse struct {
 	Data types.Account `json:"data"`
 }
 
-type AccountSummaryAndClaims struct {
+type AddressData struct {
 	AccountSummary types.Account `json:"accountSummary"`
-	Claims         Claims        `json:"claims"`
+	Metadata       Metadata      `json:"metadata"`
+	ClaimParams    []string      `json:"claimParams"`
 }
 
 // Metadata is JSON fetched from a user account summary's metadata URL
@@ -55,7 +56,7 @@ type Meta struct {
 }
 
 // Profile is mutable user data
-type UserProfile struct {
+type Profile struct {
 	Address     common.Address `json:"address"`
 	PhotoURL    string         `json:"photoURL"`
 	Email       string         `json:"email"`

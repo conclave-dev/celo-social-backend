@@ -20,7 +20,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	userID := strings.SplitAfter(r.URL.Path, "/user/")[1]
 
 	var user _types.GetUserResponse
-	var accountSummaryAndClaims _types.AccountSummaryAndClaims
+	var addressData _types.AddressData
 	switch isUser := true; isUser {
 	case kvstore.DoesAddressExist(userID):
 		fmt.Print("address exists")
@@ -30,15 +30,15 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 		break
 	case common.IsHexAddress(userID):
 		var err error
-		accountSummaryAndClaims, err = getAddressAccountSummaryAndClaims(common.HexToAddress(userID), w)
+		addressData, err = getAddressData(common.HexToAddress(userID), w)
 		if err != nil {
 			util.RespondWithError(err, w)
 			return
 		}
 
 		user = _types.GetUserResponse{
-			AccountSummary: accountSummaryAndClaims.AccountSummary,
-			Claims:         accountSummaryAndClaims.Claims,
+			AccountSummary: addressData.AccountSummary,
+			Metadata:       addressData.Metadata,
 		}
 
 		break
@@ -60,7 +60,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
-	var p _types.UserProfile
+	var p _types.Profile
 	err := util.ParseJSONBody(w, r.Body, &p)
 	if err != nil {
 		util.RespondWithError(err, w)

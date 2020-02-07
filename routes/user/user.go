@@ -14,27 +14,28 @@ import (
 	"github.com/stella-zone/celo-social-backend/util"
 )
 
-func getAddressAccountSummaryAndClaims(address common.Address, w http.ResponseWriter) (_types.AccountSummaryAndClaims, error) {
-	var accountSummaryAndClaims _types.AccountSummaryAndClaims
+func getAddressData(address common.Address, w http.ResponseWriter) (_types.AddressData, error) {
+	var addressData _types.AddressData
 	var accountSummary _types.AccountSummaryResponse
 	err := fetchAccountSummary(address, &accountSummary, w)
 	if err != nil {
 		util.RespondWithError(err, w)
-		return accountSummaryAndClaims, err
+		return addressData, err
 	}
 
-	claims, err := fetchAndParseMetadata(accountSummary.Data.MetadataURL, w)
+	metadata, claimParams, err := fetchAndParseMetadata(accountSummary.Data.MetadataURL, w)
 	if err != nil {
 		util.RespondWithError(err, w)
-		return accountSummaryAndClaims, err
+		return addressData, err
 	}
 
-	accountSummaryAndClaims = _types.AccountSummaryAndClaims{
+	addressData = _types.AddressData{
 		AccountSummary: accountSummary.Data,
-		Claims:         claims,
+		Metadata:       metadata,
+		ClaimParams:    claimParams,
 	}
 
-	return accountSummaryAndClaims, err
+	return addressData, err
 }
 
 func fetchAccountSummary(address common.Address, account *_types.AccountSummaryResponse, w http.ResponseWriter) error {
@@ -68,31 +69,43 @@ func fetchAccountSummary(address common.Address, account *_types.AccountSummaryR
 	return nil
 }
 
-func fetchAndParseMetadata(metadataURL string, w http.ResponseWriter) (_types.Claims, error) {
+func fetchAndParseMetadata(metadataURL string, w http.ResponseWriter) (_types.Metadata, []string, error) {
+	var metadata _types.Metadata
+
 	m, err := util.SendGET(metadataURL)
 	if err != nil {
 		util.RespondWithError(err, w)
-		return nil, err
+		return metadata, nil, err
 	}
 
-	var metadata _types.Metadata
 	err = json.Unmarshal(m, &metadata)
 	if err != nil {
 		util.RespondWithError(err, w)
-		return nil, err
+		return metadata, nil, err
 	}
 
-	var claims _types.Claims
-	for _, claim := range metadata.Claims {
+	return metadata, getClaimParams(metadata.Claims), nil
+}
+
+func getClaimParams(claims _types.Claims) []string {
+	http := fmt.Sprintf("http://%s", ClaimDomain)
+	https := fmt.Sprintf("https://%s", ClaimDomain)
+	var params []string
+
+	for _, claim := range claims {
 		if claim.Domain == "" {
 			continue
 		}
 
-		// Check if the metadata's claim domain is for Celo Social
-		if strings.Contains(claim.Domain, ClaimDomain) {
-			claims = append(claims, claim)
+		switch true {
+		case strings.Contains(claim.Domain, http):
+			params = append(params, strings.ReplaceAll(claim.Domain, http, ""))
+		case strings.Contains(claim.Domain, https):
+			params = append(params, strings.ReplaceAll(claim.Domain, https, ""))
+		default:
+			break
 		}
 	}
 
-	return claims, nil
+	return params
 }
