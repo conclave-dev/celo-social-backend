@@ -11,15 +11,16 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stella-zone/celo-social-backend/kvstore"
-	"github.com/stella-zone/celo-social-backend/types"
+	_types "github.com/stella-zone/celo-social-backend/types"
 	"github.com/stella-zone/celo-social-backend/util"
+	"github.com/stella-zone/go-celo/types"
 )
-
-const apiURL = "http://localhost:8080"
 
 func getUser(w http.ResponseWriter, r *http.Request) {
 	userID := strings.SplitAfter(r.URL.Path, "/user/")[1]
 
+	var user _types.GetUserResponse
+	var accountSummaryAndClaims _types.AccountSummaryAndClaims
 	switch isUser := true; isUser {
 	case kvstore.DoesAddressExist(userID):
 		fmt.Print("address exists")
@@ -28,23 +29,38 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("user exists")
 		break
 	case common.IsHexAddress(userID):
-		fmt.Print("is hex address")
-		// Fetch account summary
-		// Check metadata for claims
-		// If claim(s) exist and formatted, create an Address and User
-		// Else, respond with account summary
+		var err error
+		accountSummaryAndClaims, err = getAddressAccountSummaryAndClaims(common.HexToAddress(userID), w)
+		if err != nil {
+			util.RespondWithError(err, w)
+			return
+		}
+
+		user = _types.GetUserResponse{
+			AccountSummary: accountSummaryAndClaims.AccountSummary,
+			Claims:         accountSummaryAndClaims.Claims,
+		}
+
 		break
 	default:
-		fmt.Print("no matches")
+		util.RespondWithError(errors.New(`User not found with the specified "address" or "username"`), w)
 		return
 	}
 
-	w.Write([]byte("hi"))
+	res, err := json.Marshal(types.JSONResponse{
+		Data: user,
+	})
+	if err != nil {
+		util.RespondWithError(err, w)
+		return
+	}
+
+	w.Write(res)
 	return
 }
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
-	var p types.User
+	var p _types.UserProfile
 	err := util.ParseJSONBody(w, r.Body, &p)
 	if err != nil {
 		util.RespondWithError(err, w)
@@ -73,7 +89,7 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	kvstore.SetUpdate(hash, string(update))
 
 	res, err := json.Marshal(types.JSONResponse{
-		Data: types.UpdateResponse{
+		Data: _types.UpdateUserResponse{
 			Hash:   hash,
 			Update: string(update),
 		},

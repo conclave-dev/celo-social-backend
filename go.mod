@@ -17,7 +17,7 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.3.0
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/stella-zone/go-celo v0.0.0-20200206190453-49422480bd2f
+	github.com/stella-zone/go-celo v0.0.0-20200207164839-37580fb1ea6a
 	golang.org/x/crypto v0.0.0-20200206161412-a0c6ece9d31a // indirect
 	golang.org/x/sys v0.0.0-20200202164722-d101bd2416d5 // indirect
 )

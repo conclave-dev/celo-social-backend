@@ -4,7 +4,7 @@ import (
 	"net/url"
 )
 
-func ValidateUser(user User) {
+func ValidateUser(user UserProfile) {
 	if !isURL(user.PhotoURL) {
 		// Respond with error
 	}

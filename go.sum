@@ -311,6 +311,8 @@ github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3 h1:njlZPzLwU639
 github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3/go.mod h1:hpGUWaI9xL8pRQCTXQgocU38Qw1g0Us7n5PxxTwTCYU=
 github.com/stella-zone/go-celo v0.0.0-20200206190453-49422480bd2f h1:HJmyyTbNjdMZ5bp7nGgVhNxWdOslsuBuSIvSKHRKehI=
 github.com/stella-zone/go-celo v0.0.0-20200206190453-49422480bd2f/go.mod h1:4fPIzZEJLIuPxX21s/PISXE1Mkpp8iPaGoOywMY3ANM=
+github.com/stella-zone/go-celo v0.0.0-20200207164839-37580fb1ea6a h1:yVO2ue9LbhARAej5utnG5SIJV/whbqxScUKQFUNNC3s=
+github.com/stella-zone/go-celo v0.0.0-20200207164839-37580fb1ea6a/go.mod h1:4fPIzZEJLIuPxX21s/PISXE1Mkpp8iPaGoOywMY3ANM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
