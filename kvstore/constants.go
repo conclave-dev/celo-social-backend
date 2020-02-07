@@ -5,7 +5,7 @@ const (
 	connURL   = "localhost:6379"
 
 	// Reusable hash key constants
-	UPDATES   = "Updates"
+	PROFILES  = "Profiles"
 	USERS     = "Users"
 	ADDRESSES = "Addresses"
 )

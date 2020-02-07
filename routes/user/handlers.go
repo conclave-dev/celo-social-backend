@@ -19,7 +19,7 @@ import (
 func getUser(w http.ResponseWriter, r *http.Request) {
 	userID := strings.SplitAfter(r.URL.Path, "/user/")[1]
 
-	var user _types.User
+	var userResponse _types.UserResponse
 	switch isUser := true; isUser {
 	case kvstore.DoesAddressExist(userID):
 		fmt.Print("address exists")
@@ -28,7 +28,12 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("user exists")
 		break
 	case common.IsHexAddress(userID):
-		handleUnclaimedUser(userID, &user, w)
+		var err error
+		userResponse, err = handleUnclaimedUser(userID, w)
+		if err != nil {
+			util.RespondWithError(err, w)
+			return
+		}
 
 		break
 	default:
@@ -37,7 +42,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := json.Marshal(types.JSONResponse{
-		Data: user,
+		Data: userResponse,
 	})
 	if err != nil {
 		util.RespondWithError(err, w)
@@ -61,9 +66,9 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	hash := fmt.Sprint(hex.EncodeToString(checkSum[:]))
 
 	// Check if the update already exists
-	exists := kvstore.DoesUpdateExist(hash)
+	exists := kvstore.DoesProfileExist(hash)
 	if exists == true {
-		err := errors.New("Update already exists")
+		err := errors.New("Profile already exists")
 		util.RespondWithError(err, w)
 		return
 	}
@@ -75,12 +80,11 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Convert marshalled JSON into string and store update
-	kvstore.SetUpdate(hash, string(update))
+	kvstore.SetProfile(hash, string(update))
 
 	res, err := json.Marshal(types.JSONResponse{
-		Data: _types.UpdateUserResponse{
-			Hash:   hash,
-			Update: string(update),
+		Data: _types.UserResponse{
+			Profile: p,
 		},
 	})
 	if err != nil {

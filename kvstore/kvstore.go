@@ -40,9 +40,9 @@ func Delete(hashKey string, field string) (interface{}, error) {
 	return client.Do("HDEL", hashKey, field)
 }
 
-// IsUpdateExists checks whether an update already exists
-func DoesUpdateExist(updateHash string) bool {
-	b, err := Exists(UPDATES, updateHash)
+// DoesProfileExist checks whether an update already exists
+func DoesProfileExist(updateProfile string) bool {
+	b, err := Exists(PROFILES, updateProfile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,19 +50,19 @@ func DoesUpdateExist(updateHash string) bool {
 	return b
 }
 
-// SetUpdate stores the update hash along with the data for reference
-func SetUpdate(updateHash string, update string) (interface{}, error) {
-	return Set(UPDATES, updateHash, update)
+// SetProfile stores the update hash along with the data for reference
+func SetProfile(updateProfile string, update string) (interface{}, error) {
+	return Set(PROFILES, updateProfile, update)
 }
 
-// GetUpdate retries the update at the updateHash field
-func GetUpdate(updateHash string) (string, error) {
-	return Get(UPDATES, updateHash)
+// GetProfile retries the update at the updateProfile field
+func GetProfile(updateProfile string) (string, error) {
+	return Get(PROFILES, updateProfile)
 }
 
-// DeleteUpdate deletes the hash from the store
-func DeleteUpdate(updateHash string) (interface{}, error) {
-	return Delete(UPDATES, updateHash)
+// DeleteProfile deletes the hash from the store
+func DeleteProfile(updateProfile string) (interface{}, error) {
+	return Delete(PROFILES, updateProfile)
 }
 
 func DoesUserExist(username string) bool {

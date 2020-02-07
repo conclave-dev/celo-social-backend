@@ -4,8 +4,8 @@ import (
 	"testing"
 )
 
-func TestDoesUpdateExist(t *testing.T) {
-	exists := DoesUpdateExist("test")
+func TestDoesProfileExist(t *testing.T) {
+	exists := DoesProfileExist("test")
 
 	if exists == true {
 		t.Errorf(`Received %t but it should be false`, exists)
@@ -13,10 +13,10 @@ func TestDoesUpdateExist(t *testing.T) {
 	}
 }
 
-func TestSetUpdate(t *testing.T) {
-	SetUpdate("test", "test")
+func TestSetProfile(t *testing.T) {
+	SetProfile("test", "test")
 
-	exists := DoesUpdateExist("test")
+	exists := DoesProfileExist("test")
 
 	if exists != true {
 		t.Errorf(`Received %t but it should be true`, exists)
@@ -24,23 +24,23 @@ func TestSetUpdate(t *testing.T) {
 	}
 }
 
-func TestGetUpdate(t *testing.T) {
-	update, err := GetUpdate("test")
+func TestGetProfile(t *testing.T) {
+	update, err := GetProfile("test")
 	if err != nil {
 		t.Errorf(`Error %s`, err)
 		return
 	}
 
 	if update != "test" {
-		t.Errorf(`Received %t but it should be test`, update)
+		t.Errorf(`Received %s but it should be test`, update)
 		return
 	}
 }
 
-func TestDeleteUpdate(t *testing.T) {
-	DeleteUpdate("test")
+func TestDeleteProfile(t *testing.T) {
+	DeleteProfile("test")
 
-	exists := DoesUpdateExist("test")
+	exists := DoesProfileExist("test")
 
 	if exists == true {
 		t.Errorf("Received %t but key \"test\" should be deleted", exists)
@@ -76,7 +76,7 @@ func TestGetUser(t *testing.T) {
 	}
 
 	if update != "test" {
-		t.Errorf(`Received %t but it should be test`, update)
+		t.Errorf(`Received %s but it should be test`, update)
 		return
 	}
 }
@@ -120,7 +120,7 @@ func TestGetAddress(t *testing.T) {
 	}
 
 	if update != "test" {
-		t.Errorf(`Received %t but it should be test`, update)
+		t.Errorf(`Received %s but it should be test`, update)
 		return
 	}
 }

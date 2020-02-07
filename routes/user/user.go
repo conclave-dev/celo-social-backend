@@ -14,32 +14,48 @@ import (
 	"github.com/stella-zone/celo-social-backend/kvstore"
 	_types "github.com/stella-zone/celo-social-backend/types"
 	"github.com/stella-zone/celo-social-backend/util"
+	"github.com/stella-zone/go-celo/types"
 )
 
-func handleUnclaimedUser(address string, user *_types.User, w http.ResponseWriter) {
+func handleUnclaimedUser(address string, w http.ResponseWriter) (_types.UserResponse, error) {
+	var userResponse _types.UserResponse
 	addressData, err := getAddressData(address, w)
 	if err != nil {
 		util.RespondWithError(err, w)
-		return
+		return userResponse, err
 	}
 
-	user.AccountSummary = addressData.AccountSummary
-	user.Metadata = addressData.Metadata
-	user.Profile = getEmptyProfile(address)
-	user.Hash = generateUserHash(user.Metadata, user.Profile)
+	userResponse.AccountSummary = addressData.AccountSummary
+	userResponse.Metadata = addressData.Metadata
 
 	if len(addressData.ClaimParams) != 0 {
-		username := user.AccountSummary.Name
-		if username != "" {
-			u, err := json.Marshal(user)
-			if err != nil {
-				util.RespondWithError(err, w)
-				return
-			}
-
-			kvstore.SetUser(username, string(u))
+		username := userResponse.AccountSummary.Name
+		if username == "" {
+			util.RespondWithError(errors.New(`Account is missing "name"`), w)
+			return userResponse, err
 		}
+
+		userResponse.Profile = makeEmptyProfile(addressData.AccountSummary.Name)
+		userResponse.Hash = generateUserHash(userResponse.Profile, userResponse.AccountSummary, userResponse.Metadata)
+
+		u, err := json.Marshal(&_types.User{
+			Hash: userResponse.Hash,
+		})
+		if err != nil {
+			util.RespondWithError(err, w)
+			return userResponse, err
+		}
+		kvstore.SetUser(username, string(u))
+
+		p, err := json.Marshal(userResponse.Profile)
+		if err != nil {
+			util.RespondWithError(err, w)
+			return userResponse, err
+		}
+		kvstore.SetProfile(userResponse.Hash, string(p))
 	}
+
+	return userResponse, nil
 }
 
 func getAddressData(address string, w http.ResponseWriter) (_types.AddressData, error) {
@@ -138,24 +154,31 @@ func getClaimParams(claims _types.Claims) []string {
 	return params
 }
 
-func getEmptyProfile(address string) _types.Profile {
+func makeEmptyProfile(name string) _types.Profile {
 	profile := _types.Profile{
-		Address:     address,
+		Name:        name,
 		PhotoURL:    "",
 		Email:       "",
 		Description: "",
+		Members:     []_types.Member{},
 	}
 
 	return profile
 }
 
-func generateUserHash(metadata _types.Metadata, profile _types.Profile) string {
-	data := fmt.Sprint(_types.User{
+func generateUserHash(profile _types.Profile, accountSummary types.Account, metadata _types.Metadata) string {
+	type UserHash struct {
+		AccountSummary types.Account   `json:"accountSummary"`
+		Profile        _types.Profile  `json:"profile"`
+		Metadata       _types.Metadata `json:"metadata"`
+	}
+
+	data := fmt.Sprint(UserHash{
 		Profile:  profile,
 		Metadata: metadata,
 	})
 
 	// Convert decoded user object to sha256 checksum
-	checkSum := sha256.Sum256([]byte(fmt.Sprint(data)))
+	checkSum := sha256.Sum256([]byte(data))
 	return fmt.Sprint(hex.EncodeToString(checkSum[:]))
 }

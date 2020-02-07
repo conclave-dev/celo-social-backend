@@ -9,17 +9,24 @@ type JSONResponse struct {
 	Data interface{} `json:"data"`
 }
 
-// UpdateUserResponse structures the updateUser handler response
-type UpdateUserResponse struct {
-	Hash   string
-	Update string
+type UserResponse struct {
+	Hash           string        `json:"hash"`
+	Profile        Profile       `json:"profile"`
+	AccountSummary types.Account `json:"accountSummary"`
+	Metadata       Metadata      `json:"metadata"`
 }
 
 type User struct {
-	Hash           string        `json:hash`
-	AccountSummary types.Account `json:"accountSummary"`
-	Profile        Profile       `json:"profile"`
-	Metadata       Metadata      `json:"metadata"`
+	Hash string `json:"hash"`
+}
+
+// Profile is mutable user data
+type Profile struct {
+	Name        string   `json:"name"`
+	PhotoURL    string   `json:"photoURL"`
+	Email       string   `json:"email"`
+	Description string   `json:"description"`
+	Members     []Member `json:"members"`
 }
 
 type AccountSummaryResponse struct {
@@ -54,15 +61,6 @@ type Claim struct {
 type Meta struct {
 	Address   common.Address `json:"address"`
 	Signature string         `json:"signature"`
-}
-
-// Profile is mutable user data
-type Profile struct {
-	Address     string   `json:"address"`
-	PhotoURL    string   `json:"photoURL"`
-	Email       string   `json:"email"`
-	Description string   `json:"description"`
-	Members     []Member `json:"members"`
 }
 
 // Member is a member that the user has added
