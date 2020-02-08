@@ -19,15 +19,25 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	userID := strings.SplitAfter(r.URL.Path, "/user/")[1]
 
 	var user types.User
+	var err error
 	switch isUser := true; isUser {
 	case kvstore.DoesAddressExist(userID):
-		fmt.Print("address exists")
+		user, err = handleExistingAddress(userID, w)
+		if err != nil {
+			util.RespondWithError(err, w)
+			return
+		}
+
 		break
 	case kvstore.DoesUserExist(userID):
-		fmt.Print("user exists")
+		user, err = handleExistingName(userID, w)
+		if err != nil {
+			util.RespondWithError(err, w)
+			return
+		}
+
 		break
 	case common.IsHexAddress(userID):
-		var err error
 		user, err = handleNewAddress(userID, w)
 		if err != nil {
 			util.RespondWithError(err, w)
@@ -53,7 +63,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
-	var p types.Profile
+	var p kvstore.Profile
 	err := util.ParseJSONBody(w, r.Body, &p)
 	if err != nil {
 		util.RespondWithError(err, w)

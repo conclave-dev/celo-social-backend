@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/ethereum/go-ethereum/common"
+	kvstore "github.com/stella-zone/celo-social-backend/kvstore"
 	"github.com/stella-zone/go-celo/types"
 )
 
@@ -10,29 +11,10 @@ type JSONResponse struct {
 }
 
 type User struct {
-	Hash           string        `json:"hash,omitempty"`
-	Profile        Profile       `json:"profile"`
-	AccountSummary types.Account `json:"accountSummary"`
-	Metadata       Metadata      `json:"metadata"`
-}
-
-// Profile is mutable user data
-type Profile struct {
-	Name    string   `json:"name"`
-	Photo   string   `json:"photo"`
-	Details string   `json:"details"`
-	Website string   `json:"website"`
-	Contact Contact  `json:"contact"`
-	Members []Member `json:"members"`
-}
-
-type Contact struct {
-	Info string `json:"info"`
-	Type string `json:"type"`
-}
-
-type AccountSummaryResponse struct {
-	Data types.Account `json:"data"`
+	Hash           string          `json:"hash,omitempty"`
+	Profile        kvstore.Profile `json:"profile"`
+	AccountSummary types.Account   `json:"accountSummary"`
+	Metadata       Metadata        `json:"metadata"`
 }
 
 // Metadata is JSON fetched from a user account summary's metadata URL
@@ -57,12 +39,4 @@ type Claim struct {
 type Meta struct {
 	Address   common.Address `json:"address"`
 	Signature string         `json:"signature"`
-}
-
-// Member is a member that the user has added
-type Member struct {
-	Name    string `json:"name"`
-	Role    string `json:"role"`
-	Email   string `json:"email"`
-	Website string `json:"website"`
 }

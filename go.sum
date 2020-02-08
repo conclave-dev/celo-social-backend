@@ -309,6 +309,7 @@ github.com/steakknife/bloomfilter v0.0.0-20180922174646-6819c0d2a570 h1:gIlAHnH1
 github.com/steakknife/bloomfilter v0.0.0-20180922174646-6819c0d2a570/go.mod h1:8OR4w3TdeIHIh1g6EMY5p0gVNOovcWC+1vpc7naMuAw=
 github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3 h1:njlZPzLwU639dk2kqnCPPv+wNjq7Xb6EfUxe/oX0/NM=
 github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3/go.mod h1:hpGUWaI9xL8pRQCTXQgocU38Qw1g0Us7n5PxxTwTCYU=
+github.com/stella-zone/celo-social v0.0.0-20200207164413-218c39e962fb h1:1AqfIHk4OVs7TC1HHAgLu1hrmF+agBBvbTAOf11YE0g=
 github.com/stella-zone/go-celo v0.0.0-20200206190453-49422480bd2f h1:HJmyyTbNjdMZ5bp7nGgVhNxWdOslsuBuSIvSKHRKehI=
 github.com/stella-zone/go-celo v0.0.0-20200206190453-49422480bd2f/go.mod h1:4fPIzZEJLIuPxX21s/PISXE1Mkpp8iPaGoOywMY3ANM=
 github.com/stella-zone/go-celo v0.0.0-20200207164839-37580fb1ea6a h1:yVO2ue9LbhARAej5utnG5SIJV/whbqxScUKQFUNNC3s=

@@ -2,9 +2,11 @@ package types
 
 import (
 	"net/url"
+
+	"github.com/stella-zone/celo-social-backend/kvstore"
 )
 
-func ValidateUser(user Profile) {
+func ValidateUser(user kvstore.Profile) {
 	if !isURL(user.Photo) {
 		// Respond with error
 	}

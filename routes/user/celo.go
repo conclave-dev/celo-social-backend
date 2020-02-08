@@ -11,6 +11,7 @@ import (
 
 	"github.com/stella-zone/celo-social-backend/types"
 	"github.com/stella-zone/celo-social-backend/util"
+	celo "github.com/stella-zone/go-celo/types"
 )
 
 func fetchAccount(address string, w http.ResponseWriter) (types.User, error) {
@@ -21,35 +22,37 @@ func fetchAccount(address string, w http.ResponseWriter) (types.User, error) {
 		return user, err
 	}
 
-	metadata, err := fetchMetadata(accountSummary.Data.MetadataURL, w)
+	metadata, err := fetchMetadata(accountSummary.MetadataURL, w)
 	if err != nil {
 		util.RespondWithError(err, w)
 		return user, err
 	}
 
 	user = types.User{
-		AccountSummary: accountSummary.Data,
+		AccountSummary: accountSummary,
 		Metadata:       metadata,
 	}
 	return user, nil
 }
 
-func fetchAccountSummary(address string, w http.ResponseWriter) (types.AccountSummaryResponse, error) {
-	var accountSummaryResponse types.AccountSummaryResponse
+func fetchAccountSummary(address string, w http.ResponseWriter) (celo.Account, error) {
+	var accountSummaryResponse struct {
+		Data celo.Account `json:"data"`
+	}
 	url := fmt.Sprintf("%s/accounts/getAccountSummary", CeloAPI)
 	data := []byte(fmt.Sprintf(`{"address":"%s"}`, address))
 	reqJSON := bytes.NewBuffer(data)
 	req, err := http.NewRequest("POST", url, reqJSON)
 	if err != nil {
 		util.RespondWithError(err, w)
-		return accountSummaryResponse, err
+		return accountSummaryResponse.Data, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return accountSummaryResponse, err
+		return accountSummaryResponse.Data, err
 	}
 	defer resp.Body.Close()
 
@@ -61,10 +64,10 @@ func fetchAccountSummary(address string, w http.ResponseWriter) (types.AccountSu
 	// An io.EOF error is returned by Decode() if the body is empty.
 	if err != nil && !errors.Is(err, io.EOF) {
 		util.HandleJSONDecodeError(err, w)
-		return accountSummaryResponse, err
+		return accountSummaryResponse.Data, err
 	}
 
-	return accountSummaryResponse, nil
+	return accountSummaryResponse.Data, nil
 }
 
 func fetchMetadata(metadataURL string, w http.ResponseWriter) (types.Metadata, error) {
@@ -85,10 +88,10 @@ func fetchMetadata(metadataURL string, w http.ResponseWriter) (types.Metadata, e
 	return metadata, nil
 }
 
-func parseMetadataClaims(claims types.Claims) []string {
+func findSocialClaims(claims types.Claims) []string {
 	http := fmt.Sprintf("http://%s", ClaimDomain)
 	https := fmt.Sprintf("https://%s", ClaimDomain)
-	var params []string
+	var socialClaims []string
 
 	for _, claim := range claims {
 		if claim.Domain == "" {
@@ -97,13 +100,13 @@ func parseMetadataClaims(claims types.Claims) []string {
 
 		switch true {
 		case strings.Contains(claim.Domain, http):
-			params = append(params, strings.ReplaceAll(claim.Domain, http, ""))
+			socialClaims = append(socialClaims, strings.ReplaceAll(claim.Domain, http, ""))
 		case strings.Contains(claim.Domain, https):
-			params = append(params, strings.ReplaceAll(claim.Domain, https, ""))
+			socialClaims = append(socialClaims, strings.ReplaceAll(claim.Domain, https, ""))
 		default:
 			break
 		}
 	}
 
-	return params
+	return socialClaims
 }
