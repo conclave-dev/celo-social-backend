@@ -2,6 +2,7 @@ package kvstore
 
 import (
 	"log"
+	"strings"
 
 	"github.com/gomodule/redigo/redis"
 )
@@ -66,7 +67,8 @@ func DeleteProfile(updateProfile string) (interface{}, error) {
 }
 
 func DoesUserExist(username string) bool {
-	b, err := Exists(USERS, username)
+	u := strings.ToLower(username)
+	b, err := Exists(USERS, u)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -74,20 +76,24 @@ func DoesUserExist(username string) bool {
 	return b
 }
 
-func SetUser(username string, user string) (interface{}, error) {
-	return Set(USERS, username, user)
+func SetUser(username string, hash string) (interface{}, error) {
+	u := strings.ToLower(username)
+	return Set(USERS, u, hash)
 }
 
 func GetUser(username string) (string, error) {
-	return Get(USERS, username)
+	u := strings.ToLower(username)
+	return Get(USERS, u)
 }
 
 func DeleteUser(username string) (interface{}, error) {
-	return Delete(USERS, username)
+	u := strings.ToLower(username)
+	return Delete(USERS, u)
 }
 
 func DoesAddressExist(address string) bool {
-	b, err := Exists(ADDRESSES, address)
+	a := strings.ToLower(address)
+	b, err := Exists(ADDRESSES, a)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -95,14 +101,17 @@ func DoesAddressExist(address string) bool {
 	return b
 }
 
-func SetAddress(address string, username string) (interface{}, error) {
-	return Set(ADDRESSES, address, username)
+func SetAddress(address string, hash string) (interface{}, error) {
+	a := strings.ToLower(address)
+	return Set(ADDRESSES, a, hash)
 }
 
 func GetAddress(address string) (string, error) {
-	return Get(ADDRESSES, address)
+	a := strings.ToLower(address)
+	return Get(ADDRESSES, a)
 }
 
 func DeleteAddress(address string) (interface{}, error) {
-	return Delete(ADDRESSES, address)
+	a := strings.ToLower(address)
+	return Delete(ADDRESSES, a)
 }
