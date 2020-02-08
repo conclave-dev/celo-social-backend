@@ -10,7 +10,7 @@ type JSONResponse struct {
 }
 
 type UserResponse struct {
-	Hash           string        `json:"hash"`
+	Hash           string        `json:"hash,omitempty"`
 	Profile        Profile       `json:"profile"`
 	AccountSummary types.Account `json:"accountSummary"`
 	Metadata       Metadata      `json:"metadata"`
@@ -49,12 +49,12 @@ type Claims []Claim
 
 // Claim is a information that a user has claimed in their Celo account
 type Claim struct {
-	Address   string `json:"address"`
-	Timestamp int    `json:"timestamp"`
-	Name      string `json:"name,omitempty"`
-	Type      string `json:"type,omitempty"`
-	URL       string `json:"url,omitempty"`
-	Domain    string `json:"domain,omitempty"`
+	Address   string `json:"address,omitempty"`
+	Timestamp int    `json:"timestamp,omitempty"`
+	Name      string `json:"name,omitempty,omitempty"`
+	Type      string `json:"type,omitempty,omitempty"`
+	URL       string `json:"url,omitempty,omitempty"`
+	Domain    string `json:"domain,omitempty,omitempty"`
 }
 
 // Meta is data related to the user making the claims

@@ -35,7 +35,7 @@ func handleUnclaimedUser(address string, w http.ResponseWriter) (_types.UserResp
 			return userResponse, err
 		}
 
-		userResponse.Profile = makeEmptyProfile(addressData.AccountSummary.Name)
+		userResponse.Profile = makeEmptyProfile()
 		userResponse.Hash = generateUserHash(userResponse.Profile, userResponse.AccountSummary, userResponse.Metadata)
 
 		u, err := json.Marshal(&_types.User{
@@ -154,9 +154,9 @@ func getClaimParams(claims _types.Claims) []string {
 	return params
 }
 
-func makeEmptyProfile(name string) _types.Profile {
+func makeEmptyProfile() _types.Profile {
 	profile := _types.Profile{
-		Name:        name,
+		Name:        "",
 		PhotoURL:    "",
 		Email:       "",
 		Description: "",
