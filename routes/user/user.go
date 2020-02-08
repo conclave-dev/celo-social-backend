@@ -156,11 +156,15 @@ func getClaimParams(claims _types.Claims) []string {
 
 func makeEmptyProfile() _types.Profile {
 	profile := _types.Profile{
-		Name:        "",
-		PhotoURL:    "",
-		Email:       "",
-		Description: "",
-		Members:     []_types.Member{},
+		Name:    "",
+		Photo:   "",
+		Details: "",
+		Website: "",
+		Contact: _types.Contact{
+			Info: "",
+			Type: "",
+		},
+		Members: []_types.Member{},
 	}
 
 	return profile

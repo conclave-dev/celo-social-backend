@@ -5,7 +5,7 @@ import (
 )
 
 func ValidateUser(user Profile) {
-	if !isURL(user.PhotoURL) {
+	if !isURL(user.Photo) {
 		// Respond with error
 	}
 }

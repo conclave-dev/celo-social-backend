@@ -65,11 +65,11 @@ jobs:
           command: wget --retry-connrefused --waitretry=2 -t 5 "$APP_URL/service/health" > /dev/null
       - test-api-endpoint:
           endpoint: "$APP_URL/user/update"
-          params: '{"address":"0x2EE2a7FD94a31CF1e6Db3875F4fd3d961b15de17","photoURL":"http://celo.org"}'
-          expected: '{"data":{"Hash":"742c81a0a2f3f2c2ff4c9191499360d13e631f5c4610571f94fac01921882e18","Update":"{\"address\":\"0x2ee2a7fd94a31cf1e6db3875f4fd3d961b15de17\",\"photoURL\":\"http://celo.org\"}"}}'
+          params: '{"address":"0x2EE2a7FD94a31CF1e6Db3875F4fd3d961b15de17","photo":"http://celo.org"}'
+          expected: '{"data":{"Hash":"742c81a0a2f3f2c2ff4c9191499360d13e631f5c4610571f94fac01921882e18","Update":"{\"address\":\"0x2ee2a7fd94a31cf1e6db3875f4fd3d961b15de17\",\"photo\":\"http://celo.org\"}"}}'
       - test-api-endpoint:
           endpoint: "$APP_URL/user/update"
-          params: '{"address":"0x2EE2a7FD94a31CF1e6Db3875F4fd3d961b15de17","photoURL":"http://celo.org"}'
+          params: '{"address":"0x2EE2a7FD94a31CF1e6Db3875F4fd3d961b15de17","photo":"http://celo.org"}'
           expected: "Update already exists"
 
 workflows:

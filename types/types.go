@@ -22,11 +22,17 @@ type User struct {
 
 // Profile is mutable user data
 type Profile struct {
-	Name        string   `json:"name"`
-	PhotoURL    string   `json:"photoURL"`
-	Email       string   `json:"email"`
-	Description string   `json:"description"`
-	Members     []Member `json:"members"`
+	Name    string   `json:"name"`
+	Photo   string   `json:"photo"`
+	Details string   `json:"details"`
+	Website string   `json:"website"`
+	Contact Contact  `json:"contact"`
+	Members []Member `json:"members"`
+}
+
+type Contact struct {
+	Info string `json:"info"`
+	Type string `json:"type"`
 }
 
 type AccountSummaryResponse struct {
