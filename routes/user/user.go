@@ -1,6 +1,8 @@
 package user
 
 import (
+	"fmt"
+
 	"github.com/stella-zone/celo-social-backend/kvstore"
 	"github.com/stella-zone/celo-social-backend/types"
 )
@@ -26,6 +28,7 @@ func getUserByAddress(address string) (types.User, error) {
 			return createNewProfile(address)
 		}
 	} else {
+		fmt.Printf("CLAIMEDDD %s", hash)
 		user.Claimed = true
 	}
 
@@ -41,7 +44,6 @@ func getUserByAddress(address string) (types.User, error) {
 		return user, err
 	}
 
-	user.Claimed = true
 	user.Hash = hash
 	user.Profile = profile
 	return user, nil
