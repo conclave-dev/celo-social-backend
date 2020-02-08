@@ -11,15 +11,14 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stella-zone/celo-social-backend/kvstore"
-	_types "github.com/stella-zone/celo-social-backend/types"
+	"github.com/stella-zone/celo-social-backend/types"
 	"github.com/stella-zone/celo-social-backend/util"
-	"github.com/stella-zone/go-celo/types"
 )
 
 func getUser(w http.ResponseWriter, r *http.Request) {
 	userID := strings.SplitAfter(r.URL.Path, "/user/")[1]
 
-	var userResponse _types.UserResponse
+	var user types.User
 	switch isUser := true; isUser {
 	case kvstore.DoesAddressExist(userID):
 		fmt.Print("address exists")
@@ -29,7 +28,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 		break
 	case common.IsHexAddress(userID):
 		var err error
-		userResponse, err = handleUnclaimedUser(userID, w)
+		user, err = handleNewAddress(userID, w)
 		if err != nil {
 			util.RespondWithError(err, w)
 			return
@@ -42,7 +41,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := json.Marshal(types.JSONResponse{
-		Data: userResponse,
+		Data: user,
 	})
 	if err != nil {
 		util.RespondWithError(err, w)
@@ -54,7 +53,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
-	var p _types.Profile
+	var p types.Profile
 	err := util.ParseJSONBody(w, r.Body, &p)
 	if err != nil {
 		util.RespondWithError(err, w)
@@ -83,7 +82,7 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 	kvstore.SetProfile(hash, string(update))
 
 	res, err := json.Marshal(types.JSONResponse{
-		Data: _types.UserResponse{
+		Data: types.User{
 			Profile: p,
 		},
 	})

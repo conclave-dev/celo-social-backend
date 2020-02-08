@@ -1,6 +1,6 @@
 package user
 
 const (
-	ApiURL      = "http://localhost:8080"
+	CeloAPI     = "http://localhost:8080"
 	ClaimDomain = "celo.social"
 )

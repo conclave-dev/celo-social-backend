@@ -9,15 +9,11 @@ type JSONResponse struct {
 	Data interface{} `json:"data"`
 }
 
-type UserResponse struct {
+type User struct {
 	Hash           string        `json:"hash,omitempty"`
 	Profile        Profile       `json:"profile"`
 	AccountSummary types.Account `json:"accountSummary"`
 	Metadata       Metadata      `json:"metadata"`
-}
-
-type User struct {
-	Hash string `json:"hash"`
 }
 
 // Profile is mutable user data
@@ -37,12 +33,6 @@ type Contact struct {
 
 type AccountSummaryResponse struct {
 	Data types.Account `json:"data"`
-}
-
-type AddressData struct {
-	AccountSummary types.Account `json:"accountSummary"`
-	Metadata       Metadata      `json:"metadata"`
-	ClaimParams    []string      `json:"claimParams"`
 }
 
 // Metadata is JSON fetched from a user account summary's metadata URL
