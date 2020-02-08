@@ -11,7 +11,8 @@ type JSONResponse struct {
 }
 
 type User struct {
-	Hash           string          `json:"hash,omitempty"`
+	Claimed        bool            `json:"claimed"`
+	Hash           string          `json:"hash"`
 	Profile        kvstore.Profile `json:"profile"`
 	AccountSummary types.Account   `json:"accountSummary"`
 	Metadata       Metadata        `json:"metadata"`

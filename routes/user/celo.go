@@ -82,25 +82,19 @@ func fetchMetadata(metadataURL string) (types.Metadata, error) {
 	return metadata, nil
 }
 
-func findSocialClaims(claims types.Claims) []string {
-	http := fmt.Sprintf("http://%s", ClaimDomain)
-	https := fmt.Sprintf("https://%s", ClaimDomain)
-	var socialClaims []string
-
-	for _, claim := range claims {
-		if claim.Domain == "" {
+func findSocialClaimHash(claims types.Claims) string {
+	// Find newest social claim by iterating backwards
+	for i := len(claims) - 1; i >= 0; i = i - 1 {
+		if claims[i].Domain == "" {
 			continue
 		}
 
-		switch true {
-		case strings.Contains(claim.Domain, http):
-			socialClaims = append(socialClaims, strings.ReplaceAll(claim.Domain, http, ""))
-		case strings.Contains(claim.Domain, https):
-			socialClaims = append(socialClaims, strings.ReplaceAll(claim.Domain, https, ""))
-		default:
-			break
+		// Identify the social claim and remove the hash (should always be 3rd if claim domain is correct)
+		// Example: https://celo.social/c3b28788238d0f4b0068e9a1613c1192b69af66e6109cf9042ad0d14e945d9df
+		if strings.Contains(claims[i].Domain, "https://celo.social") {
+			return strings.Split(claims[i].Domain, "/")[3]
 		}
 	}
 
-	return socialClaims
+	return ""
 }

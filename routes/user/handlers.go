@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -18,24 +19,17 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	var user types.User
 	var err error
 	switch isUser := true; isUser {
-	case kvstore.DoesAddressExist(userID):
-		user, err = handleExistingAddress(userID)
-		if err != nil {
-			util.RespondWithError(err, w)
-			return
-		}
-
-		break
-	case kvstore.DoesUserExist(userID):
-		user, err = handleExistingName(userID)
-		if err != nil {
-			util.RespondWithError(err, w)
-			return
-		}
-
-		break
 	case common.IsHexAddress(userID):
-		user, err = handleNewAddress(userID)
+		fmt.Print("Address!")
+		user, err = getUserByAddress(userID)
+		if err != nil {
+			util.RespondWithError(err, w)
+			return
+		}
+
+		break
+	case userID != "":
+		user, err = getUserByName(userID)
 		if err != nil {
 			util.RespondWithError(err, w)
 			return
