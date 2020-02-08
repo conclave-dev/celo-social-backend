@@ -10,7 +10,7 @@ import (
 	celo "github.com/stella-zone/go-celo/types"
 )
 
-func MakeProfile(user types.User) kvstore.Profile {
+func makeProfile(user types.User) kvstore.Profile {
 	profile := kvstore.Profile{
 		Name:    user.AccountSummary.Name,
 		Address: user.AccountSummary.Address.String(),
@@ -27,7 +27,7 @@ func MakeProfile(user types.User) kvstore.Profile {
 	return profile
 }
 
-func MakeHash(profile kvstore.Profile, accountSummary celo.Account, metadata types.Metadata) string {
+func makeHash(profile kvstore.Profile, accountSummary celo.Account, metadata types.Metadata) string {
 	type UserHash struct {
 		AccountSummary celo.Account    `json:"accountSummary"`
 		Profile        kvstore.Profile `json:"profile"`

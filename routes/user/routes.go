@@ -7,5 +7,5 @@ import (
 // AddRoutes includes routes related to the `celo` endpoints on the RPC
 func AddRoutes(router *mux.Router) {
 	router.HandleFunc(`/user/{user}`, getUser)
-	router.HandleFunc(`/user/update/{user}`, updateUser)
+	router.HandleFunc(`/user/{user}/update`, updateUser)
 }

@@ -14,17 +14,15 @@ import (
 	celo "github.com/stella-zone/go-celo/types"
 )
 
-func fetchAccount(address string, w http.ResponseWriter) (types.User, error) {
+func fetchAccount(address string) (types.User, error) {
 	var user types.User
-	accountSummary, err := fetchAccountSummary(address, w)
+	accountSummary, err := fetchAccountSummary(address)
 	if err != nil {
-		util.RespondWithError(err, w)
 		return user, err
 	}
 
-	metadata, err := fetchMetadata(accountSummary.MetadataURL, w)
+	metadata, err := fetchMetadata(accountSummary.MetadataURL)
 	if err != nil {
-		util.RespondWithError(err, w)
 		return user, err
 	}
 
@@ -35,7 +33,7 @@ func fetchAccount(address string, w http.ResponseWriter) (types.User, error) {
 	return user, nil
 }
 
-func fetchAccountSummary(address string, w http.ResponseWriter) (celo.Account, error) {
+func fetchAccountSummary(address string) (celo.Account, error) {
 	var accountSummaryResponse struct {
 		Data celo.Account `json:"data"`
 	}
@@ -44,7 +42,6 @@ func fetchAccountSummary(address string, w http.ResponseWriter) (celo.Account, e
 	reqJSON := bytes.NewBuffer(data)
 	req, err := http.NewRequest("POST", url, reqJSON)
 	if err != nil {
-		util.RespondWithError(err, w)
 		return accountSummaryResponse.Data, err
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -63,25 +60,22 @@ func fetchAccountSummary(address string, w http.ResponseWriter) (celo.Account, e
 
 	// An io.EOF error is returned by Decode() if the body is empty.
 	if err != nil && !errors.Is(err, io.EOF) {
-		util.HandleJSONDecodeError(err, w)
-		return accountSummaryResponse.Data, err
+		return accountSummaryResponse.Data, util.HandleJSONDecodeError(err)
 	}
 
 	return accountSummaryResponse.Data, nil
 }
 
-func fetchMetadata(metadataURL string, w http.ResponseWriter) (types.Metadata, error) {
+func fetchMetadata(metadataURL string) (types.Metadata, error) {
 	var metadata types.Metadata
 
 	m, err := util.SendGET(metadataURL)
 	if err != nil {
-		util.RespondWithError(err, w)
 		return metadata, err
 	}
 
 	err = json.Unmarshal(m, &metadata)
 	if err != nil {
-		util.RespondWithError(err, w)
 		return metadata, err
 	}
 
